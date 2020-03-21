@@ -23,6 +23,6 @@ jobs:
       - name: Build the Docker image
         run: docker build . --file dockerfiles/Dockerfile.x86_64-unknown-linux-musl --tag docker-cross-rust:x86_64-unknown-linux-musl
       - name: Push the Docker image
-        run: docker push --tag
+        run: docker push docker-cross-rust:x86_64-unknown-linux-musl
       - name: Docker logout
         run: docker logout
