@@ -3,10 +3,9 @@ FROM ubuntu:focal
 # install tools and dependencies
 RUN set -eux; \
     apt update; \
-    apt install linux-headers-generic; \
     apt install -y --no-install-recommends \
     ca-certificates cmake file g++ git  \
-    clang libclang-dev patch make curl ninja-build python mc;
+    clang libclang-dev patch make curl ninja-build python mc linux-headers-generic;
 WORKDIR /builds
 RUN mkdir ngtc
 COPY sync.sh /builds/ngtc/
