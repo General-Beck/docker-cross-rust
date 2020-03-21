@@ -98,6 +98,9 @@ RUN	chmod +x rustup-init; \
   rm rustup-init; \
   chmod -R a+w $RUSTUP_HOME $CARGO_HOME; \
   rustup install nightly; \
+# install x86_64_unknown_linux_musl toolchain
+	rustup target add x86_64_unknown_linux_musl; \
+	rustup target add x86_64_unknown_linux_musl --toolchain nightly; \
   SCCACHE_LATEST_URL=`curl -sL    https://api.github.com/repos/mozilla/sccache/releases/latest | jq -r '.assets[2].browser_download_url'`; \
   curl -L $SCCACHE_LATEST_URL | tar zxf - --overwrite --strip-components=1 -C /usr/local/cargo/bin ; \
   rm -rf /usr/local/rustup/toolchains/*/share; \
