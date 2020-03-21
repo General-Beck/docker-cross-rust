@@ -21,8 +21,8 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v2
       - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+        run: docker build . --file Dockerfile.x86_64-unknown-linux-musl --tag docker-cross-rust:x86_64-unknown-linux-musl
       - name: Push the Docker image
-        run: docker push --tag 
+        run: docker push --tag
       - name: Docker logout
         run: docker logout
