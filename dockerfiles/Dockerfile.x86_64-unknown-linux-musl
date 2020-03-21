@@ -15,9 +15,9 @@ ENV RUSTUP_HOME=/usr/local/rustup \
 
 # install tools and dependencies
 RUN set -eux; \
-    sed 's/http:\/\/\(.*\).ubuntu.com\/ubuntu\//[arch-=amd64,i386] http:\/\/ports.ubuntu.com\/ubuntu-ports\//g' /etc/apt/sources.list > /etc/apt/sources.list.d/ports.list \
-    sed -i 's/http:\/\/\(.*\).ubuntu.com\/ubuntu\//[arch=amd64,i386] http:\/\/\1.archive.ubuntu.com\/ubuntu\//g' /etc/apt/sources.list \
-    apt -y update; \
+    #sed 's/http:\/\/\(.*\).ubuntu.com\/ubuntu\//[arch-=amd64,i386] http:\/\/ports.ubuntu.com\/ubuntu-ports\//g' /etc/apt/sources.list > /etc/apt/sources.list.d/ports.list \
+    #sed -i 's/http:\/\/\(.*\).ubuntu.com\/ubuntu\//[arch=amd64,i386] http:\/\/\1.archive.ubuntu.com\/ubuntu\//g' /etc/apt/sources.list \
+    apt update; \
     apt install -y --no-install-recommends \
     autoconf automake binutils ca-certificates cmake file gcc g++ git jq libc6-dev zlib1g-dev \
     libtool m4 make pkg-config curl libssl-dev;
