@@ -15,10 +15,10 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v2
       - name: Build the Docker image
-        run: docker build . --file dockerfiles/Dockerfile.x86_64-unknown-linux-musl --tag generalbeck/docker-cross-rust:x86_64-unknown-linux-musl
+        run: docker build . --file dockerfiles/Dockerfile.clang --tag generalbeck/docker-cross-rust:clang
       - name: Push the Docker image
         run: |
           docker login -u ${{ secrets.REGISTRY_USERNAME }} -p ${{ secrets.REGISTRY_PASSWORD }}
-          docker push generalbeck/docker-cross-rust:x86_64-unknown-linux-musl
+          docker push generalbeck/docker-cross-rust:clang
       - name: Docker logout
         run: docker logout
