@@ -1,36 +1,15 @@
 #!/bin/sh
 
-LLVMREPO='https://git.llvm.org/git'
+LLVMREPO='https://github.com/llvm/llvm-project.git'
 REPOS='llvm clang lld libunwind compiler-rt libcxx libcxxabi'
 ROOT=$(dirname $(readlink -f "$0"))
 
-clonerepo () {
-  echo -n "cloning $1... ";
+git clone --depth 1 --branch $1 https://github.com/llvm/llvm-project.git src
 
-  REPO="$LLVMREPO/$1/"
+cd src/
 
-  if ! git clone --depth 1 $REPO &>/dev/null; then
-    echo fail
-    rm -rf $1
-    exit 2
-  else
-    echo success
-  fi
-}
 
-pullrepo () {
-  echo -n "updating $1... "
 
-  REPO="$LLVMREPO/$1/"
-
-  if ! git -C $1 pull &>/dev/null; then
-    echo fail
-    rm -rf $1
-    clonerepo $1
-  else
-    echo success
-  fi
-}
 
 if [ ! -d $ROOT/src ]; then
   mkdir $ROOT/src || $(echo 'failed to create directory' && exit 1)
@@ -54,13 +33,6 @@ fi
 
 cd $ROOT/src || $(echo 'failed to change directory' && exit 1)
 
-for REPO in $REPOS; do
-  if [ -d $REPO ]; then
-    pullrepo $REPO
-  else
-    clonerepo $REPO
-  fi
-done
 
 for REPO in $REPOS; do
   PATCHES="$(ls -1 $ROOT/patch/$REPO-*.patch 2>/dev/null)"

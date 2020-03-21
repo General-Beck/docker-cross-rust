@@ -13,7 +13,7 @@ COPY dockerfiles/configure.sh /builds/ngtc/
 COPY dockerfiles/build.sh /builds/ngtc/
 COPY dockerfiles/install.sh /builds/ngtc/
 RUN cd ngtc;\
-  ./sync.sh
+  ./sync.sh release/9.x
 RUN cd ngtc;\
   ./configure.sh
 RUN cd ngtc;\
