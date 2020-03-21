@@ -3,7 +3,7 @@ FROM ubuntu:focal
 # install tools and dependencies
 RUN set -eux; \
     apt update; \
-    apt install linux-headers-$(uname -r)
+    apt install linux-headers-$(uname -r); \
     apt install -y --no-install-recommends \
     ca-certificates cmake file g++ git  \
     clang libclang-dev patch make curl ninja-build python mc;
