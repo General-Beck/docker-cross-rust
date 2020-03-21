@@ -5,7 +5,7 @@ RUN set -eux; \
     apt update; \
     apt install -y --no-install-recommends \
     ca-certificates cmake file g++ git  \
-    clang libclang-dev patch make curl ninja-build python mc linux-headers-generic;
+    clang libclang-dev patch make curl ninja-build python2 mc linux-headers-generic;
 WORKDIR /builds
 RUN mkdir ngtc
 COPY sync.sh /builds/ngtc/
