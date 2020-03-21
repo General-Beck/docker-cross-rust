@@ -8,10 +8,10 @@ RUN set -eux; \
     clang libclang-dev patch make curl ninja-build python2 mc linux-headers-generic;
 WORKDIR /builds
 RUN mkdir ngtc
-COPY sync.sh /builds/ngtc/
-COPY configure.sh /builds/ngtc/
-COPY build.sh /builds/ngtc/
-COPY install.sh /builds/ngtc/
+COPY dockerfiles/sync.sh /builds/ngtc/
+COPY dockerfiles/configure.sh /builds/ngtc/
+COPY dockerfiles/build.sh /builds/ngtc/
+COPY dockerfiles/install.sh /builds/ngtc/
 RUN cd ngtc;\
   ./sync.sh
 RUN cd ngtc;\
