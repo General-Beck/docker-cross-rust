@@ -21,8 +21,8 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v2
       - name: Build the Docker image
-        run: docker build . --file dockerfiles/Dockerfile.x86_64-unknown-linux-musl --tag docker-cross-rust:x86_64-unknown-linux-musl
+        run: docker build . --file dockerfiles/Dockerfile.x86_64-unknown-linux-musl --tag generalbeck/docker-cross-rust:x86_64-unknown-linux-musl
       - name: Push the Docker image
-        run: docker push docker-cross-rust:x86_64-unknown-linux-musl
+        run: docker push generalbeck/docker-cross-rust:x86_64-unknown-linux-musl
       - name: Docker logout
         run: docker logout
