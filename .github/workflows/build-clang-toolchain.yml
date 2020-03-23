@@ -16,5 +16,5 @@ jobs:
           docker run generalbeck/docker-cross-rust:alpine-sccache /bin/sh -c \
           'git clone https://github.com/General-Beck/docker-cross-rust.git clang&& \
           cd clang && git checkout ngtc && cd dockerfiles && ls -a && \
-          sh sync.sh && sh configure.sh && sh build.sh && sh install.sh' \
+          sh sync.sh release/9.x && sh configure.sh && sh build.sh && sh install.sh' \
           ls -a
