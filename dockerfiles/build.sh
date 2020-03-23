@@ -6,8 +6,8 @@ ARCH="$(uname -m)"
 TARGETS='X86'
 ROOT=$(dirname $(readlink -f "$0"))
 
-PATH=/"$ARCH"-pc-linux-musl/bin:"$PATH"
-LD_LIBRARY_PATH=/"$ARCH"-pc-linux-musl/lib
+PATH=/"$ARCH"-unknown-linux-musl/bin:"$PATH"
+LD_LIBRARY_PATH=/"$ARCH"-unknown-linux-musl/lib
 
 if [ ! -d $ROOT/src ]; then
   echo no sources found, run sync

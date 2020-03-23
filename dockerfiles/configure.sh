@@ -6,8 +6,8 @@ ARCH="$(uname -m)"
 TARGETS='X86'
 ROOT=$(dirname $(readlink -f "$0"))
 
-PATH=/"$ARCH"-pc-linux-musl/bin:"$PATH"
-LD_LIBRARY_PATH=/"$ARCH"-pc-linux-musl/lib
+PATH=/"$ARCH"-unknown-linux-musl/bin:"$PATH"
+LD_LIBRARY_PATH=/"$ARCH"-unknown-linux-musl/lib
 
 if [ ! -d $ROOT/src ]; then
   echo no sources found, run sync
@@ -53,9 +53,9 @@ cmake \
     -DCLANG_DEFAULT_CXX_STDLIB=libc++ \
     -DCLANG_DEFAULT_LINKER=lld \
     -DCLANG_DEFAULT_RTLIB=compiler-rt \
-    -DLLVM_DEFAULT_TARGET_TRIPLE="$ARCH"-pc-linux-musl \
-    -DDEFAULT_SYSROOT=/"$ARCH"-pc-linux-musl \
-    -DCMAKE_INSTALL_PREFIX=/"$ARCH"-pc-linux-musl \
+    -DLLVM_DEFAULT_TARGET_TRIPLE="$ARCH"-unknown-linux-musl \
+    -DDEFAULT_SYSROOT=/"$ARCH"-unknown-linux-musl \
+    -DCMAKE_INSTALL_PREFIX=/"$ARCH"-unknown-linux-musl \
     -DCMAKE_BUILD_TYPE=Release \
     -DLLVM_TARGET_ARCH="$ARCH" \
     -DLLVM_TARGETS_TO_BUILD="$TARGETS" \

@@ -1,0 +1,19 @@
+diff --git a/compiler-rt/lib/sanitizer_common/sanitizer_platform_limits_posix.cc b/compiler-rt/lib/sanitizer_common/sanitizer_platform_limits_posix.cc
+index d273d3736..f772e8754 100644
+--- a/compiler-rt/lib/sanitizer_common/sanitizer_platform_limits_posix.cc
++++ b/compiler-rt/lib/sanitizer_common/sanitizer_platform_limits_posix.cc
+@@ -116,10 +116,10 @@ typedef struct user_fpregs elf_fpregset_t;
+ #    include <obstack.h>
+ #  endif
+ #include <mqueue.h>
+-#include <net/if_ppp.h>
+-#include <netax25/ax25.h>
+-#include <netipx/ipx.h>
+-#include <netrom/netrom.h>
++#include <linux/if_ppp.h>
++#include <linux/ax25.h>
++#include <linux/ipx.h>
++#include <linux/netrom.h>
+ #if HAVE_RPC_XDR_H
+ # include <rpc/xdr.h>
+ #endif

@@ -7,6 +7,13 @@ RUN set -eux; \
     ca-certificates cmake file g++ git  \
     clang libclang-dev patch make curl ninja-build python2 mc linux-headers-generic;
 WORKDIR /builds
+RUN SCCACHE_LATEST_URL=`curl -sL    https://api.github.com/repos/mozilla/sccache/releases/latest | jq -r '.assets[2].browser_download_url'`; \
+  curl -L $SCCACHE_LATEST_URL | tar zxf - --overwrite --strip-components=1 -C /usr/bin ;\
+  sccache --version
+ENV CC="sccache /usr/bin/clang"\
+    CXX="sccache /usr/bin/clang++"\
+    SCCACHE_REDIS=redis://172.17.0.1/0 \
+    SCCACHE_IDLE_TIMEOUT=0
 RUN mkdir ngtc
 COPY dockerfiles/sync.sh /builds/ngtc/
 COPY dockerfiles/configure.sh /builds/ngtc/

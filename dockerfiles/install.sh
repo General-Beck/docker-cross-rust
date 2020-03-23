@@ -6,8 +6,8 @@ ARCH="$(uname -m)"
 TARGETS='X86'
 ROOT=$(dirname $(readlink -f "$0"))
 
-PATH=/"$ARCH"-pc-linux-musl/bin:"$PATH"
-LD_LIBRARY_PATH=/"$ARCH"-pc-linux-musl/lib
+PATH=/"$ARCH"-unknown-linux-musl/bin:"$PATH"
+LD_LIBRARY_PATH=/"$ARCH"-unknown-linux-musl/lib
 
 if [ ! -d $ROOT/src ]; then
   echo no sources found, run sync
@@ -40,7 +40,7 @@ cd $ROOT/build/llvm || $(echo 'failed to change directory' && exit 1)
 
 ninja install || exit 42
 
-cd /"$ARCH"-pc-linux-musl/bin || $(echo 'failed to change directory' && exit 1)
+cd /"$ARCH"-unknown-linux-musl/bin || $(echo 'failed to change directory' && exit 1)
 ln -s llvm-ar ar
 ln -s llvm-ranlib ranlib
 ln -s llvm-objcopy objcopy
@@ -51,4 +51,4 @@ ln -s clang cc
 ln -s clang++ c++
 ln -s ld.lld ld
 cd / || $(echo 'failed to change directory' && exit 1)
-tar cvfz "$ARCH"-pc-linux-musl.tar.gz "$ARCH"-pc-linux-musl || exit 46
+tar cvfz "$ARCH"-unknown-linux-musl.tar.gz "$ARCH"-unknown-linux-musl || exit 46
