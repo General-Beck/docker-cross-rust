@@ -41,6 +41,8 @@ cd $ROOT/build/llvm || $(echo 'failed to change directory' && exit 1)
 cmake \
     -DCMAKE_C_COMPILER=clang \
     -DCMAKE_CXX_COMPILER=clang++ \
+    -DCMAKE_C_COMPILER_LAUNCHER=sccache \
+    -DCMAKE_CXX_COMPILER_LAUNCHER=sccache \
     -DLIBCXXABI_LIBCXX_PATH=$ROOT/src/libcxx \
     -DLIBCXXABI_LIBCXX_INCLUDES=$ROOT/src/libcxx/include \
     -DLIBCXXABI_ENABLE_STATIC_UNWINDER=ON \

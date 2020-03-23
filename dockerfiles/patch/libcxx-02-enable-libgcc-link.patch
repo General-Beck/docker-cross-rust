@@ -1,7 +1,7 @@
-diff --git a/libcxx/CMakeLists.txt b/libcxx/CMakeLists.txt
+diff --git a/CMakeLists.txt b/CMakeLists.txt
 index ec1869ddc..d64def6c2 100644
---- a/libcxx/CMakeLists.txt
-+++ b/libcxx/CMakeLists.txt
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
 @@ -449,7 +449,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${LIBCXX_LIBRARY_DIR})
  #                             These libraries are exposed in the linker script.
  set(LIBCXX_COMPILE_FLAGS "")

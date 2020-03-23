@@ -1,7 +1,7 @@
-diff --git a/compiler-rt/lib/scudo/CMakeLists.txt b/compiler-rt/lib/scudo/CMakeLists.txt
+diff --git a/lib/scudo/CMakeLists.txt b/lib/scudo/CMakeLists.txt
 index 2a560b8fc..c657679bb 100644
---- a/compiler-rt/lib/scudo/CMakeLists.txt
-+++ b/compiler-rt/lib/scudo/CMakeLists.txt
+--- a/lib/scudo/CMakeLists.txt
++++ b/lib/scudo/CMakeLists.txt
 @@ -8,6 +8,7 @@ list(APPEND SCUDO_CFLAGS -fbuiltin)
  append_rtti_flag(OFF SCUDO_CFLAGS)
 
