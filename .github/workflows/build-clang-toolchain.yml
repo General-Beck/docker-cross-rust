@@ -10,11 +10,16 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    container: generalbeck/docker-cross-rust:alpine-sccache
     steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
       - name: Build Clang MUSL toolchain
         run: |
-          docker run generalbeck/docker-cross-rust:alpine-sccache /bin/sh -c \
-          'git clone https://github.com/General-Beck/docker-cross-rust.git clang&& \
-          cd clang && git checkout ngtc && cd dockerfiles && ls -a && \
-          sh sync.sh release/9.x && sh configure.sh && sh build.sh && sh install.sh' \
+          cd dockerfilesls -a
+          sync.sh release/9.x
+          configure.sh
+          build.sh
+          install.sh
           ls -a
+        shell: sh
