@@ -18,9 +18,9 @@ jobs:
         run: |
           cd dockerfiles
           ls -a
-          sync.sh release/9.x
-          configure.sh
-          build.sh
-          install.sh
+          sh sync.sh release/9.x
+          sh configure.sh
+          sh build.sh
+          sh install.sh
           ls -a
         shell: sh
