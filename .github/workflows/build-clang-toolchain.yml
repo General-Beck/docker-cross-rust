@@ -16,7 +16,8 @@ jobs:
         uses: actions/checkout@v2
       - name: Build Clang MUSL toolchain
         run: |
-          cd dockerfilesls -a
+          cd dockerfiles
+          ls -a
           sync.sh release/9.x
           configure.sh
           build.sh
