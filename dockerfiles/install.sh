@@ -52,3 +52,5 @@ ln -s clang++ c++
 ln -s ld.lld ld
 cd / || $(echo 'failed to change directory' && exit 1)
 tar cvfz "$ARCH"-unknown-linux-musl.tar.gz "$ARCH"-unknown-linux-musl || exit 46
+mkdir -p /artifact || $(echo 'failed to change directory' && exit 1)
+mv -v "$ARCH"-unknown-linux-musl.tar.gz /artifact

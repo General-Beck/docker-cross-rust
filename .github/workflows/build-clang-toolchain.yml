@@ -24,3 +24,8 @@ jobs:
           sh install.sh
           ls -a
         shell: sh
+      - name:          Upload artifact's
+        uses:          actions/upload-artifact@v1
+        with:
+          name:        x86_64-unknown-linux-musl
+          path:        artifacts/
