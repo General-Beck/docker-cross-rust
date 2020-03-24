@@ -27,5 +27,5 @@ jobs:
       - name:          Upload artifact's
         uses:          actions/upload-artifact@v1
         with:
-          name:        x86_64-unknown-linux-musl
-          path:        /artifact/
+          name:        x86_64-unknown-linux-musl.zip
+          path:        artifact/
