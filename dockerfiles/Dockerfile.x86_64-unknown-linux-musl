@@ -5,7 +5,7 @@ ARG TARGET=x86_64-linux-musl
 ARG OPENSSL_ARCH=linux-x86_64
 
 ENV RUST_MUSL_CROSS_TARGET=$TARGET
-
+ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /builds
 
 # rustup directory
