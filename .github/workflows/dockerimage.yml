@@ -9,7 +9,7 @@ jobs:
 
   build-x86_64-unknown-linux-musl:
 
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout sources
