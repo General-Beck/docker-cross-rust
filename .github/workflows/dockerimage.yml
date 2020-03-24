@@ -19,6 +19,6 @@ jobs:
       - name: Push the Docker image
         run: |
           docker login docker.pkg.github.com -u General-Beck -p ${{ secrets.GITHUB_TOKEN }}
-          docker push docker.pkg.github.com/General-Beck/docker-cross-rust/docker-cross-rust:x86_64
+          docker push docker.pkg.github.com/general-geck/docker-cross-rust/docker-cross-rust:x86_64
       - name: Docker logout
         run: docker logout
