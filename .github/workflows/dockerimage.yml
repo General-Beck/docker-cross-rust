@@ -18,7 +18,7 @@ jobs:
         run: docker build . --file dockerfiles/Dockerfile.x86_64-unknown-linux-musl --tag docker.pkg.github.com/general-beck/docker-cross-rust/docker-cross-rust:x86_64-unknown-linux-musl
       - name: Push the Docker image
         run: |
-          docker login -u General-Beck -p ${{ secrets.GITHUB_TOKEN }}
+          docker login docker.pkg.github.com -u General-Beck -p ${{ secrets.GITHUB_TOKEN }}
           docker push docker.pkg.github.com/General-Beck/docker-cross-rust/docker-cross-rust:x86_64
       - name: Docker logout
         run: docker logout
