@@ -1,0 +1,31 @@
+name: Build Clang
+
+on:
+  push:
+    branches: [ master ]
+  #pull_request:
+
+jobs:
+
+  build-clang-musl-toolchain:
+
+    runs-on: self-hosted
+    container: generalbeck/docker-cross-rust:alpine-sccache
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - name: Build Clang MUSL toolchain
+        run: |
+          cd dockerfiles
+          ls -a
+          sh sync.sh release/9.x
+          sh configure.sh
+          sh build.sh
+          sh install.sh
+          ls -a
+        shell: sh
+      - name:          Upload artifact's
+        uses:          actions/upload-artifact@v1
+        with:
+          name:        x86_64-unknown-linux-musl.zip
+          path:        dockerfiles/artifact/

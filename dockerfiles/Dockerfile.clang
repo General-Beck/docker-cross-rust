@@ -1,0 +1,24 @@
+FROM alpine:edge
+
+RUN apk add --no-cache \
+    clang-dev \
+    clang-static \
+    cmake \
+    g++ \
+    git \
+    libexecinfo-dev \
+    linux-headers \
+    make \
+    ninja \
+    patch \
+    python \
+    curl \
+    jq \
+    mc
+
+
+RUN SCCACHE_LATEST_URL=`curl -sL    https://api.github.com/repos/mozilla/sccache/releases/latest | jq -r '.assets[2].browser_download_url'`; \
+  curl -L $SCCACHE_LATEST_URL | tar zxf - --overwrite --strip-components=1 -C /usr/bin ;\
+  sccache --version
+ENV SCCACHE_REDIS=redis://172.17.0.1/0 \
+    SCCACHE_IDLE_TIMEOUT=0
