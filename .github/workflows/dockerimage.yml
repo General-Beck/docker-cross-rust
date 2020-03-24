@@ -15,7 +15,7 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v2
       - name: Build the Docker image
-        run: docker build . --file dockerfiles/Dockerfile.x86_64-unknown-linux-musl --tag docker.pkg.github.com/General-Beck/docker-cross-rust/docker-cross-rust:x86_64-unknown-linux-musl
+        run: docker build . --file dockerfiles/Dockerfile.x86_64-unknown-linux-musl --tag docker.pkg.github.com/general-beck/docker-cross-rust/docker-cross-rust:x86_64-unknown-linux-musl
       - name: Push the Docker image
         run: |
           docker login -u General-Beck -p ${{ secrets.GITHUB_TOKEN }}
