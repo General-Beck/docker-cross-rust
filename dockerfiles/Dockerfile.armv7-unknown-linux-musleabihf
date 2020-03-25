@@ -1,9 +1,9 @@
 FROM ubuntu:focal
 
 # metadata
-ARG TARGET=x86_64-unknown-linux-musl
-ARG OPENSSL_ARCH=linux-x86_64
-ARG MUSL_TARGET=x86_64-linux-musl
+ARG TARGET=armv7-unknown-linux-musleabihf
+ARG OPENSSL_ARCH=linux-armv4
+ARG MUSL_TARGET=armv7r-linux-musleabihf
 
 ENV RUST_MUSL_CROSS_TARGET=$TARGET
 ENV DEBIAN_FRONTEND=noninteractive
@@ -31,32 +31,32 @@ RUN curl -sLO https://musl.cc/$MUSL_TARGET-cross.tgz&& \
     cp -fR * ../../usr/local/&& \
     cd ..&& rm -rf $MUSL_TARGET-cross*
 
-ENV CC=$TARGET-gcc \
-    CXX=$TARGET-g++ \
-    CC_x86_64_unknown_linux_musl=$TARGET-gcc \
-    CXX_x86_64_unknown_linux_musl=$TARGET-g++\
-    CARGO_TARGET_X86_64_UNKNOWN_LINUX_MUSL_LINKER=$TARGET-gcc \
-    TARGET_CC=$TARGET-gcc\
-    TARGET_CXX=$TARGET-g++\
-    TARGET_AR=$TARGET-ar\
-    TARGET_C_INCLUDE_PATH=/usr/local/$TARGET/include/\
-    CXX_LIB_PATH_x86_64_unknown_linux_musl=/usr/local/$TARGET/lib/ \
-    C_LIB_PATH_x86_64_unknown_linux_musl=/usr/local/$TARGET/lib/\
-    CXXSTDLIB=stdc++ \
-    TARGET_CXXSTDLIB=stdc++ \
-    CXXSTDLIB_x86_64_unknown_linux_musl=stdc++ \
-    LDFLAGS_x86_64_unknown_linux_musl=" -static -static-libstdc++ -static-libgcc -L/usr/local/lib -L/usr/local/$TARGET/lib" \
-    LDFLAGS=" -static -static-libstdc++ -static-libgcc -L/usr/local/lib -L/usr/local/$TARGET/lib" \
-    CFLAGS_x86_64_unknown_linux_musl=" -fPIC  -I/usr/local/include -I/usr/local/$TARGET/include" \
-    CXXFLAGS_x86_64_unknown_linux_musl=" -fPIC  -I/usr/local/include -I/usr/local/$TARGET/include" \
-    CFLAGS=" -fPIC  -I/usr/local/include -I/usr/local/$TARGET/include" \
-    CXXFLAGS=" -fPIC  -I/usr/local/include -I/usr/local/$TARGET/include" \
-    LD_LIBRARY_PATH=/usr/local/lib:/usr/local/$TARGET/lib:$LD_LIBRARY_PATH \
-    PKG_CONFIG_ALLOW_CROSS=1 \
-    PKG_CONFIG_ALL_STATIC=1 \
-    OPENSSL_STATIC=1 \
-    LIBZ_SYS_STATIC=1 \
-    PATH=/usr/local/$TARGET/bin:$PATH \
+    ENV CC=$TARGET-gcc \
+        CXX=$TARGET-g++ \
+        CC_armv7_unknown_linux_musleabihf=$TARGET-gcc \
+        CXX_armv7_unknown_linux_musleabihf=$TARGET-g++\
+        CARGO_TARGET_ARMV7_UNKNOWN_LINUX_MUSLEABIHF_LINKER=$TARGET-gcc \
+        TARGET_CC=$TARGET-gcc\
+        TARGET_CXX=$TARGET-g++\
+        TARGET_AR=$TARGET-ar\
+        TARGET_C_INCLUDE_PATH=/usr/local/$TARGET/include/\
+        CXX_LIB_PATH_armv7_unknown_linux_musleabihf=/usr/local/$TARGET/lib/ \
+        C_LIB_PATH_armv7_unknown_linux_musleabihf=/usr/local/$TARGET/lib/\
+        CXXSTDLIB=stdc++ \
+        TARGET_CXXSTDLIB=stdc++ \
+        CXXSTDLIB_armv7_unknown_linux_musleabihf=stdc++ \
+        LDFLAGS_armv7_unknown_linux_musleabihf=" -static -static-libstdc++ -static-libgcc -L/usr/local/lib -L/usr/local/$TARGET/lib" \
+        LDFLAGS=" -static -static-libstdc++ -static-libgcc -L/usr/local/lib -L/usr/local/$TARGET/lib" \
+        CFLAGS_armv7_unknown_linux_musleabihf=" -fPIC  -I/usr/local/include -I/usr/local/$TARGET/include" \
+        CXXFLAGS_armv7_unknown_linux_musleabihf=" -fPIC  -I/usr/local/include -I/usr/local/$TARGET/include" \
+        CFLAGS=" -fPIC  -I/usr/local/include -I/usr/local/$TARGET/include" \
+        CXXFLAGS=" -fPIC  -I/usr/local/include -I/usr/local/$TARGET/include" \
+        LD_LIBRARY_PATH=/usr/local/lib:/usr/local/$TARGET/lib:$LD_LIBRARY_PATH \
+        PKG_CONFIG_ALLOW_CROSS=1 \
+        PKG_CONFIG_ALL_STATIC=1 \
+        OPENSSL_STATIC=1 \
+        LIBZ_SYS_STATIC=1 \
+        PATH=/usr/local/$TARGET/bin:$PATH \
 
 # ZLib & OpenSSL
 RUN export C_INCLUDE_PATH=$TARGET_C_INCLUDE_PATH && \
@@ -103,7 +103,8 @@ ENV OPENSSL_DIR=/usr/local/$TARGET/ \
 
 #Prepare sccache ENV
 RUN mkdir $HOME/sccache
-ENV RUST_BACKTRACE=full\
+ENV RUST_BACKTRACE=full \
+    RUST_TEST_THREADS=1 \
     RUSTC_WRAPPER=sccache \
     SCCACHE_DIR=$HOME/sccache \
     SCCACHE_CACHE_SIZE=1G

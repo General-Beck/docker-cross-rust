@@ -8,17 +8,23 @@ on:
 jobs:
 
   build:
-
+    name: Build Docker images
+    strategy:
+      matrix:
+        target:        #List of [supported targets](https://github.com/rust-embedded/cross#supported-targets)
+          - aarch64-unknown-linux-musl
+          - armv7-unknown-linux-musleabihf
+          - x86_64-unknown-linux-musl
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
       - name: Build the Docker image
-        run: docker build . --file dockerfiles/Dockerfile.x86_64-unknown-linux-musl --tag docker.pkg.github.com/general-beck/docker-cross-rust/docker-cross-rust:x86_64-unknown-linux-musl
+        run: docker build . --file dockerfiles/Dockerfile.${{ matrix.target }} --tag generalbeck/docker-cross-rust:${{ matrix.target }}
       - name: Docker login
-        run: docker login docker.pkg.github.com -u General-Beck -p ${{ secrets.GITHUB_TOKEN }}
+        run:  docker login -u ${{ secrets.REGISTRY_USERNAME }} -p ${{ secrets.REGISTRY_PASSWORD }}
       - name: Push the Docker image
-        run: docker push docker.pkg.github.com/general-beck/docker-cross-rust/docker-cross-rust:x86_64-unknown-linux-musl
+        run:  docker push generalbeck/docker-cross-rust:${{ matrix.target }}
       - name: Docker logout
         run: docker logout
