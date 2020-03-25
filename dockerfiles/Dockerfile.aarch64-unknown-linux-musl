@@ -46,7 +46,7 @@ ENV CC=$TARGET-gcc \
     PKG_CONFIG_ALL_STATIC=1 \
     OPENSSL_STATIC=1 \
     LIBZ_SYS_STATIC=1 \
-    PATH=/usr/local/$TARGET/bin:$PATH 
+    PATH=/usr/local/$TARGET/bin:$PATH
 
 # ZLib & OpenSSL
 RUN export C_INCLUDE_PATH=$TARGET_C_INCLUDE_PATH && \
@@ -54,7 +54,7 @@ RUN export C_INCLUDE_PATH=$TARGET_C_INCLUDE_PATH && \
     VERS=1.2.11 && \
     curl -sLO https://zlib.net/zlib-$VERS.tar.gz && \
     tar xzf zlib-$VERS.tar.gz && cd zlib-$VERS && \
-    ./configure --static --archs="-fPIC" --prefix=/usr/local/$TARGET && \
+    ./configure --static --prefix=/usr/local/$TARGET && \
     make && make install && \
     cd .. && rm -rf zlib-$VERS.tar.gz zlib-$VERS checksums.txt && \
     echo "Building OpenSSL" && \

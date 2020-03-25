@@ -28,7 +28,7 @@ ENV CC=$TARGET-gcc \
     CXX=$TARGET-g++ \
     CC_armv7_unknown_linux_musleabihf=$TARGET-gcc \
     CXX_armv7_unknown_linux_musleabihf=$TARGET-g++\
-    CARGO_TARGET_ARMV7_UNKNOWN_LINUX_MUSLEABIHF_LINKER=$TARGET-gcc \
+    CARGO_TARGET_ARMV7_UNKNOWN_LINUX_MUSLEhttps://github.com/madler/zlibABIHF_LINKER=$TARGET-gcc \
     TARGET_CC=$TARGET-gcc\
     TARGET_CXX=$TARGET-g++\
     TARGET_AR=$TARGET-ar\
@@ -49,7 +49,7 @@ ENV CC=$TARGET-gcc \
     PKG_CONFIG_ALL_STATIC=1 \
     OPENSSL_STATIC=1 \
     LIBZ_SYS_STATIC=1 \
-    PATH=/usr/local/$TARGET/bin:$PATH 
+    PATH=/usr/local/$TARGET/bin:$PATH
 
 # ZLib & OpenSSL
 RUN export C_INCLUDE_PATH=$TARGET_C_INCLUDE_PATH && \
@@ -57,7 +57,7 @@ RUN export C_INCLUDE_PATH=$TARGET_C_INCLUDE_PATH && \
     VERS=1.2.11 && \
     curl -sLO https://zlib.net/zlib-$VERS.tar.gz && \
     tar xzf zlib-$VERS.tar.gz && cd zlib-$VERS && \
-    ./configure --static --archs="-fPIC" --prefix=/usr/local/$TARGET && \
+    ./configure --static --prefix=/usr/local/$TARGET && \
     make && make install && \
     cd .. && rm -rf zlib-$VERS.tar.gz zlib-$VERS checksums.txt && \
     echo "Building OpenSSL" && \
