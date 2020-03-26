@@ -62,7 +62,7 @@ RUN set -eux; \
     tar xzf zlib-$VERS.tar.gz && cd zlib-$VERS && \
     $CC -v&&\
     CHOST=$TARGET CC=$TARGET_CC ./configure --static --prefix=/usr/local/$MUSL_TARGET && \
-    make && make install && \
+    make --silent && make --silent install && \
     cd .. && rm -rf zlib-$VERS.tar.gz zlib-$VERS checksums.txt
 RUN set -eux; \
     echo "Building OpenSSL" && \
@@ -71,7 +71,7 @@ RUN set -eux; \
     tar xzf openssl-$VERS.tar.gz && cd openssl-$VERS && \
     ./Configure $OPENSSL_ARCH no-async no-afalgeng no-shared --static --prefix=/usr/local/$MUSL_TARGET && \
     make depend && \
-    make && make install && \
+    make --silent && make --silent install && \
     cd .. && rm -rf openssl-$VERS.tar.gz openssl-$VERS checksums.txt /usr/local/$MUSL_TARGET/share
 
 #Install QEMU
