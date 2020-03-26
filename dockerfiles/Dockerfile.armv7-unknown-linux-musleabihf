@@ -15,7 +15,8 @@ RUN set -eux; \
     apt update; \
     apt install -qq -y --no-install-recommends \
     autoconf automake binutils ca-certificates cmake file gcc g++ git jq \
-    libc6-dev libtool m4 make pkg-config curl libssl-dev zlib1g-dev mc;
+    libc6-dev libtool m4 make pkg-config curl libssl-dev zlib1g-dev mc \
+    qemu binfmt-support qemu-user-static;
 
 # install musl
 
@@ -30,8 +31,8 @@ ENV CC=$MUSL_TARGET-gcc \
     CXX=$MUSL_TARGET-g++ \
     CC_armv7_unknown_linux_musleabihf=$MUSL_TARGET-gcc \
     CXX_armv7_unknown_linux_musleabihf=$MUSL_TARGET-g++\
-    CARGO_TARGET_ARMV7_UNKNOWN_LINUX_MUSLEhttps://github.com/madler/zlibABIHF_LINKER=$MUSL_TARGET-gcc \
-    CARGO_TARGET_ARMV7_UNKNOWN_LINUX_MUSLEABIHF_RUNNER=qemu-armeb-static \
+    CARGO_TARGET_ARMV7_UNKNOWN_LINUX_MUSLEABIHF_LINKER=$MUSL_TARGET-gcc \
+    CARGO_TARGET_ARMV7_UNKNOWN_LINUX_MUSLEABIHF_RUNNER=qemu-user-static \
     TARGET_CC=$MUSL_TARGET-gcc\
     TARGET_CXX=$MUSL_TARGET-g++\
     TARGET_AR=$MUSL_TARGET-ar\

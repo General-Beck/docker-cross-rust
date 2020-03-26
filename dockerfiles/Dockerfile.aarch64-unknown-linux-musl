@@ -16,7 +16,8 @@ RUN set -eux; \
     apt update; \
     apt install -qq -y --no-install-recommends \
     autoconf automake binutils ca-certificates cmake file gcc g++ git jq \
-    libc6-dev libtool m4 make pkg-config curl libssl-dev zlib1g-dev mc;
+    libc6-dev libtool m4 make pkg-config curl libssl-dev zlib1g-dev mc \
+    qemu binfmt-support qemu-user-static;
 
 # install musl
 
@@ -31,7 +32,7 @@ ENV CC=$MUSL_TARGET-gcc \
     CC_aarch64_unknown_linux_musl=$MUSL_TARGET-gcc \
     CXX_aarch64_unknown_linux_musl=$MUSL_TARGET-g++\
     CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_LINKER=$MUSL_TARGET-gcc \
-    CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_RUNNER=qemu-aarch64_be-static \
+    CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_RUNNER=qemu-user-static \
     TARGET_CC=$MUSL_TARGET-gcc\
     TARGET_CXX=$MUSL_TARGET-g++\
     TARGET_AR=$MUSL_TARGET-ar\
@@ -75,9 +76,9 @@ RUN set -eux; \
     cd .. && rm -rf openssl-$VERS.tar.gz openssl-$VERS checksums.txt /usr/local/$MUSL_TARGET/share
 
 #Install QEMU
-RUN curl -s https://api.github.com/repos/multiarch/qemu-user-static/releases/latest \
-    | grep 'browser_download_url.*x86_64_qemu-aarch64_be-static.tar.gz"' \
-    | cut -d : -f 2,3 | xargs -n 1 curl -sSL | tar -xzC /usr/local/bin/
+#RUN curl -s https://api.github.com/repos/multiarch/qemu-user-static/releases/latest \
+#    | grep 'browser_download_url.qemu-aarch64_be-static.tar.gz"' \
+#    | cut -d : -f 2,3 | xargs -n 1 curl -sSL | tar -xzC /usr/local/bin/
 
 # Allows qemu run dynamic linked binaries
 RUN ln -sf \
