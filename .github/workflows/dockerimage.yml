@@ -8,7 +8,7 @@ on:
 jobs:
 
   build:
-    name: Build Docker images
+    name: Build
     strategy:
       matrix:
         target:        #List of [supported targets](https://github.com/rust-embedded/cross#supported-targets)

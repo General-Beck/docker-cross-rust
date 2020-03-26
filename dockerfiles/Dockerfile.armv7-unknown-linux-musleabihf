@@ -3,7 +3,7 @@ FROM ubuntu:focal
 # metadata
 ARG TARGET=armv7-unknown-linux-musleabihf
 ARG OPENSSL_ARCH=linux-armv4
-ARG MUSL_TARGET=armv7r-linux-musleabihf
+ARG MUSL_TARGET=arm-linux-musleabihf
 
 ENV RUST_MUSL_CROSS_TARGET=$TARGET \
     TARGET_HOST=$TARGET
@@ -19,51 +19,60 @@ RUN set -eux; \
 
 # install musl
 
-RUN curl -L https://github.com/richfelker/musl-cross-make/archive/master.tar.gz | \
+RUN curl -L https://git.zv.io/toolchains/musl-cross-make/-/archive/master/musl-cross-make-master.tar.gz | \
     tar --strip-components=1 -xz; \
     make install -j$(nproc) \
+    TARGET=$MUSL_TARGET
     GCC_VER=9.3.0 \
     MUSL_VER=1.2.0 \
+    BINUTILS_VER = 2.34 \
+    GMP_VER = 6.2.0 \
+    MPC_VER = 1.1.0 \
+    MPFR_VER = 4.0.2 \
+    LINUX_VER = 5.4.24 \
     DL_CMD="curl -C - -L -o" \
     OUTPUT=/usr/local/ \
-    "COMMON_CONFIG += --with-arch=armv7-a \
+    STAT = -static --static \
+    FLAG = -g0 -O2 -fno-align-functions -fno-align-jumps -fno-align-loops -fno-align-labels \
+    COMMON_CONFIG += CC="$(HOST)-gcc ${STAT}" CXX="$(HOST)-g++ ${STAT}"  \
+    COMMON_CONFIG += CFLAGS="-g0 -Os" CXXFLAGS="-g0 -Os" LDFLAGS="-s" \
+    COMMON_CONFIG += --with-arch=armv7-a \
                       --with-float=hard \
                       --with-mode=thumb" \
-    COMMON_CONFIG += CFLAGS="-g0 -Os" CXXFLAGS="-g0 -Os" LDFLAGS="-s" \
     "$@"; \
-    ls -a&& cd ..&&ls -a 
+    ls -a&& cd ..&&ls -a
 #RUN curl -sLO https://musl.cc/$MUSL_TARGET-cross.tgz&& \
 #    tar xzf $MUSL_TARGET-cross.tgz&& \
 #    cd $MUSL_TARGET-cross&& \
 #    cp -fR * ../../usr/local/&& \
 #    cd ..&& rm -rf $MUSL_TARGET-cross*
 
-ENV CC=$TARGET-gcc \
-    CXX=$TARGET-g++ \
-    CC_armv7_unknown_linux_musleabihf=$TARGET-gcc \
-    CXX_armv7_unknown_linux_musleabihf=$TARGET-g++\
-    CARGO_TARGET_ARMV7_UNKNOWN_LINUX_MUSLEhttps://github.com/madler/zlibABIHF_LINKER=$TARGET-gcc \
-    TARGET_CC=$TARGET-gcc\
-    TARGET_CXX=$TARGET-g++\
-    TARGET_AR=$TARGET-ar\
-    TARGET_C_INCLUDE_PATH=/usr/local/$TARGET/include/\
-    CXX_LIB_PATH_armv7_unknown_linux_musleabihf=/usr/local/$TARGET/lib/ \
-    C_LIB_PATH_armv7_unknown_linux_musleabihf=/usr/local/$TARGET/lib/\
+ENV CC=$MUSL_TARGET-gcc \
+    CXX=$MUSL_TARGET-g++ \
+    CC_armv7_unknown_linux_musleabihf=$MUSL_TARGET-gcc \
+    CXX_armv7_unknown_linux_musleabihf=$MUSL_TARGET-g++\
+    CARGO_TARGET_ARMV7_UNKNOWN_LINUX_MUSLEhttps://github.com/madler/zlibABIHF_LINKER=$MUSL_TARGET-gcc \
+    TARGET_CC=$MUSL_TARGET-gcc\
+    TARGET_CXX=$MUSL_TARGET-g++\
+    TARGET_AR=$MUSL_TARGET-ar\
+    TARGET_C_INCLUDE_PATH=/usr/local/$MUSL_TARGET/include/\
+    CXX_LIB_PATH_armv7_unknown_linux_musleabihf=/usr/local/$MUSL_TARGET/lib/ \
+    C_LIB_PATH_armv7_unknown_linux_musleabihf=/usr/local/$MUSL_TARGET/lib/\
     CXXSTDLIB=stdc++ \
     TARGET_CXXSTDLIB=stdc++ \
     CXXSTDLIB_armv7_unknown_linux_musleabihf=stdc++ \
-    LDFLAGS_armv7_unknown_linux_musleabihf=" -static -static-libstdc++ -static-libgcc -L/usr/local/lib -L/usr/local/$TARGET/lib" \
-    LDFLAGS=" -static -static-libstdc++ -static-libgcc -L/usr/local/lib -L/usr/local/$TARGET/lib" \
-    CFLAGS_armv7_unknown_linux_musleabihf=" -I/usr/local/include -I/usr/local/$TARGET/include" \
-    CXXFLAGS_armv7_unknown_linux_musleabihf=" -I/usr/local/include -I/usr/local/$TARGET/include" \
-    CFLAGS=" -I/usr/local/include -I/usr/local/$TARGET/include" \
-    CXXFLAGS=" -I/usr/local/include -I/usr/local/$TARGET/include" \
-    LD_LIBRARY_PATH=/usr/local/lib:/usr/local/$TARGET/lib:$LD_LIBRARY_PATH \
+    LDFLAGS_armv7_unknown_linux_musleabihf=" -static -static-libstdc++ -static-libgcc -L/usr/local/lib -L/usr/local/$MUSL_TARGET/lib" \
+    LDFLAGS=" -static -static-libstdc++ -static-libgcc -L/usr/local/lib -L/usr/local/$MUSL_TARGET/lib" \
+    CFLAGS_armv7_unknown_linux_musleabihf=" -I/usr/local/include -I/usr/local/$MUSL_TARGET/include" \
+    CXXFLAGS_armv7_unknown_linux_musleabihf=" -I/usr/local/include -I/usr/local/$MUSL_TARGET/include" \
+    CFLAGS=" -I/usr/local/include -I/usr/local/$MUSL_TARGET/include" \
+    CXXFLAGS=" -I/usr/local/include -I/usr/local/$MUSL_TARGET/include" \
+    LD_LIBRARY_PATH=/usr/local/lib:/usr/local/$MUSL_TARGET/lib:$LD_LIBRARY_PATH \
     PKG_CONFIG_ALLOW_CROSS=1 \
     PKG_CONFIG_ALL_STATIC=1 \
     OPENSSL_STATIC=1 \
     LIBZ_SYS_STATIC=1 \
-    PATH=/usr/local/$TARGET/bin:$PATH
+    PATH=/usr/local/$MUSL_TARGET/bin:$PATH
 
 # ZLib & OpenSSL
 RUN echo "Building zlib" && \
@@ -71,17 +80,17 @@ RUN echo "Building zlib" && \
     curl -sLO https://zlib.net/zlib-$VERS.tar.gz && \
     tar xzf zlib-$VERS.tar.gz && cd zlib-$VERS && \
     $CC -v&&\
-    CHOST=$TARGET CC=$TARGET_CC ./configure --static --prefix=/usr/local/$TARGET && \
+    CHOST=$TARGET CC=$TARGET_CC ./configure --static --prefix=/usr/local/$MUSL_TARGET && \
     make && make install && \
     cd .. && rm -rf zlib-$VERS.tar.gz zlib-$VERS checksums.txt
 RUN echo "Building OpenSSL" && \
     VERS=1.1.1d && \
     curl -sLO https://www.openssl.org/source/openssl-$VERS.tar.gz && \
     tar xzf openssl-$VERS.tar.gz && cd openssl-$VERS && \
-    ./Configure $OPENSSL_ARCH no-async no-afalgeng no-shared --static --prefix=/usr/local/$TARGET && \
+    ./Configure $OPENSSL_ARCH no-async no-afalgeng no-shared --static --prefix=/usr/local/$MUSL_TARGET && \
     make depend && \
     make && make install && \
-    cd .. && rm -rf openssl-$VERS.tar.gz openssl-$VERS checksums.txt /usr/local/$TARGET/share
+    cd .. && rm -rf openssl-$VERS.tar.gz openssl-$VERS checksums.txt /usr/local/$MUSL_TARGET/share
 
 # download rustup
 ADD "https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/rustup-init" rustup-init
@@ -108,10 +117,10 @@ RUN	chmod +x rustup-init; \
   rm -rf /var/lib/apt/lists/*;
 
 COPY config/$TARGET.config /root/.cargo/config
-ENV OPENSSL_DIR=/usr/local/$TARGET/ \
-    OPENSSL_INCLUDE_DIR=/usr/local/$TARGET/include/ \
-    DEP_OPENSSL_INCLUDE=/usr/local/$TARGET/include/ \
-    OPENSSL_LIB_DIR=/usr/local/$TARGET/lib/
+ENV OPENSSL_DIR=/usr/local/$MUSL_TARGET/ \
+    OPENSSL_INCLUDE_DIR=/usr/local/$MUSL_TARGET/include/ \
+    DEP_OPENSSL_INCLUDE=/usr/local/$MUSL_TARGET/include/ \
+    OPENSSL_LIB_DIR=/usr/local/$MUSL_TARGET/lib/
 
 #Prepare sccache ENV
 RUN mkdir $HOME/sccache
