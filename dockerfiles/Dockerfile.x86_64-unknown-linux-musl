@@ -95,7 +95,7 @@ RUN	chmod +x rustup-init; \
   apt clean; \
   rm -rf /var/lib/apt/lists/*;
 
-COPY config/$TARGET.config /root/.cargo/config
+COPY dockerfiles/config/$TARGET.config /root/.cargo/config
 ENV OPENSSL_DIR=/usr/local/$MUSL_TARGET/ \
     OPENSSL_INCLUDE_DIR=/usr/local/$MUSL_TARGET/include/ \
     DEP_OPENSSL_INCLUDE=/usr/local/$MUSL_TARGET/include/ \

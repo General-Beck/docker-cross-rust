@@ -31,6 +31,7 @@ ENV CC=$MUSL_TARGET-gcc \
     CC_aarch64_unknown_linux_musl=$MUSL_TARGET-gcc \
     CXX_aarch64_unknown_linux_musl=$MUSL_TARGET-g++\
     CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_LINKER=$MUSL_TARGET-gcc \
+    CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_RUNNER=qemu-aarch64_be-static \
     TARGET_CC=$MUSL_TARGET-gcc\
     TARGET_CXX=$MUSL_TARGET-g++\
     TARGET_AR=$MUSL_TARGET-ar\
@@ -54,7 +55,8 @@ ENV CC=$MUSL_TARGET-gcc \
     PATH=/usr/local/$MUSL_TARGET/bin:$PATH
 
 # ZLib & OpenSSL
-RUN echo "Building zlib" && \
+RUN set -eux; \
+    echo "Building zlib" && \
     VERS=1.2.11 && \
     curl -sLO https://zlib.net/zlib-$VERS.tar.gz && \
     tar xzf zlib-$VERS.tar.gz && cd zlib-$VERS && \
@@ -62,7 +64,8 @@ RUN echo "Building zlib" && \
     CHOST=$TARGET CC=$TARGET_CC ./configure --static --prefix=/usr/local/$MUSL_TARGET && \
     make && make install && \
     cd .. && rm -rf zlib-$VERS.tar.gz zlib-$VERS checksums.txt
-RUN echo "Building OpenSSL" && \
+RUN set -eux; \
+    echo "Building OpenSSL" && \
     VERS=1.1.1d && \
     curl -sLO https://www.openssl.org/source/openssl-$VERS.tar.gz && \
     tar xzf openssl-$VERS.tar.gz && cd openssl-$VERS && \
@@ -71,6 +74,16 @@ RUN echo "Building OpenSSL" && \
     make && make install && \
     cd .. && rm -rf openssl-$VERS.tar.gz openssl-$VERS checksums.txt /usr/local/$MUSL_TARGET/share
 
+#Install QEMU
+RUN curl -s https://api.github.com/repos/multiarch/qemu-user-static/releases/latest \
+    | grep 'browser_download_url.*x86_64_qemu-aarch64_be-static.tar.gz"' \
+    | cut -d : -f 2,3 | xargs -n 1 curl -sSL | tar -xzC /usr/local/bin/
+
+# Allows qemu run dynamic linked binaries
+RUN ln -sf \
+    /usr/local/aarch64-linux-musl/lib/libc.so \
+    /usr/local/aarch64-linux-musl/lib/ld-musl-aarch64.so.1
+ENV QEMU_LD_PREFIX=/usr/local/aarch64-linux-musl
 
 # download rustup
 ADD "https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/rustup-init" rustup-init
@@ -96,7 +109,8 @@ RUN	chmod +x rustup-init; \
   apt clean; \
   rm -rf /var/lib/apt/lists/*;
 
-COPY config/$TARGET.config /root/.cargo/config
+COPY dockerfiles/config/$TARGET.config /root/.cargo/config
+
 ENV OPENSSL_DIR=/usr/local/$MUSL_TARGET/ \
     OPENSSL_INCLUDE_DIR=/usr/local/$MUSL_TARGET/include/ \
     DEP_OPENSSL_INCLUDE=/usr/local/$MUSL_TARGET/include/ \

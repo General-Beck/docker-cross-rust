@@ -3,7 +3,7 @@ FROM ubuntu:focal
 # metadata
 ARG TARGET=armv7-unknown-linux-musleabihf
 ARG OPENSSL_ARCH=linux-armv4
-ARG MUSL_TARGET=arm-linux-musleabihf
+ARG MUSL_TARGET=armeb-linux-musleabihf
 
 ENV RUST_MUSL_CROSS_TARGET=$TARGET \
     TARGET_HOST=$TARGET
@@ -31,6 +31,7 @@ ENV CC=$MUSL_TARGET-gcc \
     CC_armv7_unknown_linux_musleabihf=$MUSL_TARGET-gcc \
     CXX_armv7_unknown_linux_musleabihf=$MUSL_TARGET-g++\
     CARGO_TARGET_ARMV7_UNKNOWN_LINUX_MUSLEhttps://github.com/madler/zlibABIHF_LINKER=$MUSL_TARGET-gcc \
+    CARGO_TARGET_ARMV7_UNKNOWN_LINUX_MUSLEABIHF_RUNNER=qemu-armeb-static \
     TARGET_CC=$MUSL_TARGET-gcc\
     TARGET_CXX=$MUSL_TARGET-g++\
     TARGET_AR=$MUSL_TARGET-ar\
@@ -73,6 +74,17 @@ RUN set -eux; \
     make && make install && \
     cd .. && rm -rf openssl-$VERS.tar.gz openssl-$VERS checksums.txt /usr/local/$MUSL_TARGET/share
 
+#Install QEMU
+RUN curl -s https://api.github.com/repos/multiarch/qemu-user-static/releases/latest \
+    | grep 'browser_download_url.*x86_64_qemu-armeb-static.tar.gz"' \
+    | cut -d : -f 2,3 | xargs -n 1 curl -sSL | tar -xzC /usr/local/bin/
+
+# Allows qemu run dynamic linked binaries
+RUN ln -sf \
+    /usr/local/arm-linux-musleabi/lib/libc.so \
+    /usr/local/arm-linux-musleabi/lib/ld-musl-arm.so.1
+ENV QEMU_LD_PREFIX=/usr/local/arm-linux-musleabi
+
 # download rustup
 ADD "https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/rustup-init" rustup-init
 
@@ -97,7 +109,7 @@ RUN	chmod +x rustup-init; \
   apt clean; \
   rm -rf /var/lib/apt/lists/*;
 
-COPY config/$TARGET.config /root/.cargo/config
+COPY dockerfiles/config/$TARGET.config /root/.cargo/config
 ENV OPENSSL_DIR=/usr/local/$MUSL_TARGET/ \
     OPENSSL_INCLUDE_DIR=/usr/local/$MUSL_TARGET/include/ \
     DEP_OPENSSL_INCLUDE=/usr/local/$MUSL_TARGET/include/ \

@@ -2,3 +2,4 @@
 rustflags = ["-C", "target-feature=+crt-static", "-C","link-arg=-lgcc"]
 ar = "aarch64-linux-musl-ar"
 linker = "aarch64-linux-musl-ld"
+runner = "qemu-aarch64_be-static"
