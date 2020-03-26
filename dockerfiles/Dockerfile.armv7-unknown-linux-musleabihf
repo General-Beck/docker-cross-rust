@@ -19,26 +19,29 @@ RUN set -eux; \
 
 # install musl
 
-RUN curl -L https://git.zv.io/toolchains/musl-cross-make/-/archive/master/musl-cross-make-master.tar.gz | \
+RUN set -eux; \
+    curl -L https://git.zv.io/toolchains/musl-cross-make/-/archive/master/musl-cross-make-master.tar.gz | \
     tar --strip-components=1 -xz; \
+    export STAT=" -static --static "; \
+    export FLAG=" -g0 -O2 -fno-align-functions -fno-align-jumps -fno-align-loops -fno-align-labels "; \
     make install -j$(nproc) \
-    TARGET=$MUSL_TARGET \
+    TARGET=arm-linux-musleabihf \
     GCC_VER=9.3.0 \
     MUSL_VER=1.2.0 \
-    BINUTILS_VER = 2.34 \
-    GMP_VER = 6.2.0 \
-    MPC_VER = 1.1.0 \
-    MPFR_VER = 4.0.2 \
-    LINUX_VER = 5.4.24 \
+    BINUTILS_VER=2.34 \
+    GMP_VER=6.2.0 \
+    MPC_VER=1.1.0 \
+    MPFR_VER=4.0.2 \
+    LINUX_VER=5.4.24 \
     DL_CMD="curl -C - -L -o" \
     OUTPUT=/usr/local/ \
-    STAT = -static --static \
-    FLAG = -g0 -O2 -fno-align-functions -fno-align-jumps -fno-align-loops -fno-align-labels \
-    COMMON_CONFIG += CC="$(HOST)-gcc ${STAT}" CXX="$(HOST)-g++ ${STAT}"  \
-    COMMON_CONFIG += CFLAGS="-g0 -Os" CXXFLAGS="-g0 -Os" LDFLAGS="-s" \
-    COMMON_CONFIG += --with-arch=armv7-a \
-                      --with-float=hard \
-                      --with-mode=thumb" \
+    COMMON_CONFIG+=CC="gcc -static --static " CXX="g++ -static --static "  \
+    COMMON_CONFIG+=CFLAGS="${FLAG}" \
+                   CXXFLAGS="${FLAG}" \
+                   LDFLAGS="-s -static --static " \
+    COMMON_CONFIG+="--with-arch=armv7-a \
+                    --with-float=hard \
+                    --with-mode=thumb" \
     "$@"; \
     ls -a&& cd ..&&ls -a
 #RUN curl -sLO https://musl.cc/$MUSL_TARGET-cross.tgz&& \
@@ -75,7 +78,8 @@ ENV CC=$MUSL_TARGET-gcc \
     PATH=/usr/local/$MUSL_TARGET/bin:$PATH
 
 # ZLib & OpenSSL
-RUN echo "Building zlib" && \
+RUN set -eux; \
+    echo "Building zlib" && \
     VERS=1.2.11 && \
     curl -sLO https://zlib.net/zlib-$VERS.tar.gz && \
     tar xzf zlib-$VERS.tar.gz && cd zlib-$VERS && \
@@ -83,7 +87,8 @@ RUN echo "Building zlib" && \
     CHOST=$TARGET CC=$TARGET_CC ./configure --static --prefix=/usr/local/$MUSL_TARGET && \
     make && make install && \
     cd .. && rm -rf zlib-$VERS.tar.gz zlib-$VERS checksums.txt
-RUN echo "Building OpenSSL" && \
+RUN set -eux; \
+    echo "Building OpenSSL" && \
     VERS=1.1.1d && \
     curl -sLO https://www.openssl.org/source/openssl-$VERS.tar.gz && \
     tar xzf openssl-$VERS.tar.gz && cd openssl-$VERS && \

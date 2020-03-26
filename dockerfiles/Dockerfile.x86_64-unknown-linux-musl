@@ -21,21 +21,23 @@ RUN set -eux; \
 
 RUN curl -L https://git.zv.io/toolchains/musl-cross-make/-/archive/master/musl-cross-make-master.tar.gz | \
     tar --strip-components=1 -xz; \
+    export STAT=" -static --static "; \
+    export FLAG=" -g0 -O2 -fno-align-functions -fno-align-jumps -fno-align-loops -fno-align-labels "; \
     make install -j$(nproc) \
-    TARGET=$MUSL_TARGET \
+    TARGET=arm-linux-musleabihf \
     GCC_VER=9.3.0 \
     MUSL_VER=1.2.0 \
-    BINUTILS_VER = 2.34 \
-    GMP_VER = 6.2.0 \
-    MPC_VER = 1.1.0 \
-    MPFR_VER = 4.0.2 \
-    LINUX_VER = 5.4.24 \
+    BINUTILS_VER=2.34 \
+    GMP_VER=6.2.0 \
+    MPC_VER=1.1.0 \
+    MPFR_VER=4.0.2 \
+    LINUX_VER=5.4.24 \
     DL_CMD="curl -C - -L -o" \
     OUTPUT=/usr/local/ \
-    STAT = -static --static \
-    FLAG = -g0 -O2 -fno-align-functions -fno-align-jumps -fno-align-loops -fno-align-labels \
-    COMMON_CONFIG += CC="$(HOST)-gcc ${STAT}" CXX="$(HOST)-g++ ${STAT}"  \
-    COMMON_CONFIG += CFLAGS="-g0 -Os" CXXFLAGS="-g0 -Os" LDFLAGS="-s" \
+    COMMON_CONFIG+=CC="gcc -static --static " CXX="g++ -static --static "  \
+    COMMON_CONFIG+=CFLAGS="${FLAG}" \
+                   CXXFLAGS="${FLAG}" \
+                   LDFLAGS="-s -static --static " \
     "$@"; \
     ls -a&& cd ..&&ls -a
 #RUN curl -sLO https://musl.cc/$MUSL_TARGET-cross.tgz&& \
