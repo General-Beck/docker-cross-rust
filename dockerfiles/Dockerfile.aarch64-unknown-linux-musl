@@ -33,7 +33,7 @@ RUN curl -L https://github.com/richfelker/musl-cross-make/archive/master.tar.gz 
     COMMON_CONFIG += CFLAGS="-g0 -Os" CXXFLAGS="-g0 -Os" LDFLAGS="-s" \
     OUTPUT=/usr/local/ \
     "$@"; \
-    cd ..&&ls -a && rm -rf *
+    ls -a&& cd ..&&ls -a 
 #RUN curl -sLO https://musl.cc/$MUSL_TARGET-cross.tgz&& \
 #    tar xzf $MUSL_TARGET-cross.tgz&& \
 #    cd $MUSL_TARGET-cross&& \
