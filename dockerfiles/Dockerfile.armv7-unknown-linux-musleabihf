@@ -26,7 +26,12 @@ curl -L https://github.com/richfelker/musl-cross-make/archive/master.tar.gz | \
     MUSL_VER=1.2.0 \
     DL_CMD="curl -C - -L -o" \
     OUTPUT=/usr/local/ \
-    "$@"
+    "COMMON_CONFIG += --with-arch=armv7-a \
+                      --with-float=hard \
+                      --with-mode=thumb" \
+    COMMON_CONFIG += CFLAGS="-g0 -Os" CXXFLAGS="-g0 -Os" LDFLAGS="-s" \
+    "$@"; \
+    cd ..&&ls -a && rm -rf *
 #RUN curl -sLO https://musl.cc/$MUSL_TARGET-cross.tgz&& \
 #    tar xzf $MUSL_TARGET-cross.tgz&& \
 #    cd $MUSL_TARGET-cross&& \
