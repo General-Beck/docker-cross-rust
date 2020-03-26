@@ -5,7 +5,8 @@ ARG TARGET=armv7-unknown-linux-musleabihf
 ARG OPENSSL_ARCH=linux-armv4
 ARG MUSL_TARGET=armv7r-linux-musleabihf
 
-ENV RUST_MUSL_CROSS_TARGET=$TARGET
+ENV RUST_MUSL_CROSS_TARGET=$TARGET \
+    TARGET_HOST=$TARGET
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /builds
 
@@ -18,11 +19,19 @@ RUN set -eux; \
 
 # install musl
 
-RUN curl -sLO https://musl.cc/$MUSL_TARGET-cross.tgz&& \
-    tar xzf $MUSL_TARGET-cross.tgz&& \
-    cd $MUSL_TARGET-cross&& \
-    cp -fR * ../../usr/local/&& \
-    cd ..&& rm -rf $MUSL_TARGET-cross*
+curl -L https://github.com/richfelker/musl-cross-make/archive/master.tar.gz | \
+    tar --strip-components=1 -xz; \
+    make install -j$(nproc) \
+    GCC_VER=9.3.0 \
+    MUSL_VER=1.2.0 \
+    DL_CMD="curl -C - -L -o" \
+    OUTPUT=/usr/local/ \
+    "$@"
+#RUN curl -sLO https://musl.cc/$MUSL_TARGET-cross.tgz&& \
+#    tar xzf $MUSL_TARGET-cross.tgz&& \
+#    cd $MUSL_TARGET-cross&& \
+#    cp -fR * ../../usr/local/&& \
+#    cd ..&& rm -rf $MUSL_TARGET-cross*
 
 ENV CC=$TARGET-gcc \
     CXX=$TARGET-g++ \
@@ -40,10 +49,10 @@ ENV CC=$TARGET-gcc \
     CXXSTDLIB_armv7_unknown_linux_musleabihf=stdc++ \
     LDFLAGS_armv7_unknown_linux_musleabihf=" -static -static-libstdc++ -static-libgcc -L/usr/local/lib -L/usr/local/$TARGET/lib" \
     LDFLAGS=" -static -static-libstdc++ -static-libgcc -L/usr/local/lib -L/usr/local/$TARGET/lib" \
-    CFLAGS_armv7_unknown_linux_musleabihf=" -fPIC  -I/usr/local/include -I/usr/local/$TARGET/include" \
-    CXXFLAGS_armv7_unknown_linux_musleabihf=" -fPIC  -I/usr/local/include -I/usr/local/$TARGET/include" \
-    CFLAGS=" -fPIC  -I/usr/local/include -I/usr/local/$TARGET/include" \
-    CXXFLAGS=" -fPIC  -I/usr/local/include -I/usr/local/$TARGET/include" \
+    CFLAGS_armv7_unknown_linux_musleabihf=" -I/usr/local/include -I/usr/local/$TARGET/include" \
+    CXXFLAGS_armv7_unknown_linux_musleabihf=" -I/usr/local/include -I/usr/local/$TARGET/include" \
+    CFLAGS=" -I/usr/local/include -I/usr/local/$TARGET/include" \
+    CXXFLAGS=" -I/usr/local/include -I/usr/local/$TARGET/include" \
     LD_LIBRARY_PATH=/usr/local/lib:/usr/local/$TARGET/lib:$LD_LIBRARY_PATH \
     PKG_CONFIG_ALLOW_CROSS=1 \
     PKG_CONFIG_ALL_STATIC=1 \
@@ -52,19 +61,19 @@ ENV CC=$TARGET-gcc \
     PATH=/usr/local/$TARGET/bin:$PATH
 
 # ZLib & OpenSSL
-RUN export C_INCLUDE_PATH=$TARGET_C_INCLUDE_PATH && \
-    echo "Building zlib" && \
+RUN echo "Building zlib" && \
     VERS=1.2.11 && \
     curl -sLO https://zlib.net/zlib-$VERS.tar.gz && \
     tar xzf zlib-$VERS.tar.gz && cd zlib-$VERS && \
-    ./configure --static --prefix=/usr/local/$TARGET && \
+    $CC -v&&\
+    CHOST=$TARGET CC=$TARGET_CC ./configure --static --prefix=/usr/local/$TARGET && \
     make && make install && \
-    cd .. && rm -rf zlib-$VERS.tar.gz zlib-$VERS checksums.txt && \
-    echo "Building OpenSSL" && \
+    cd .. && rm -rf zlib-$VERS.tar.gz zlib-$VERS checksums.txt
+RUN echo "Building OpenSSL" && \
     VERS=1.1.1d && \
     curl -sLO https://www.openssl.org/source/openssl-$VERS.tar.gz && \
     tar xzf openssl-$VERS.tar.gz && cd openssl-$VERS && \
-    ./Configure $OPENSSL_ARCH no-async no-afalgeng no-shared --static -fPIC --prefix=/usr/local/$TARGET && \
+    ./Configure $OPENSSL_ARCH no-async no-afalgeng no-shared --static --prefix=/usr/local/$TARGET && \
     make depend && \
     make && make install && \
     cd .. && rm -rf openssl-$VERS.tar.gz openssl-$VERS checksums.txt /usr/local/$TARGET/share

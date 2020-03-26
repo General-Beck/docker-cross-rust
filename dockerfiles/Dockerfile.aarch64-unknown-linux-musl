@@ -5,7 +5,8 @@ ARG TARGET=aarch64-unknown-linux-musl
 ARG OPENSSL_ARCH=linux-aarch64
 ARG MUSL_TARGET=aarch64-linux-musl
 
-ENV RUST_MUSL_CROSS_TARGET=$TARGET
+ENV RUST_MUSL_CROSS_TARGET=$TARGET \
+    TARGET_HOST=$TARGET
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /builds
 
@@ -20,6 +21,22 @@ RUN set -eux; \
     apt install -y --no-install-recommends \
     autoconf automake binutils ca-certificates cmake file gcc g++ git jq \
     libc6-dev libtool m4 make pkg-config curl libssl-dev zlib1g-dev mc;
+
+# install musl
+
+curl -L https://github.com/richfelker/musl-cross-make/archive/master.tar.gz | \
+    tar --strip-components=1 -xz; \
+    make install -j$(nproc) \
+    GCC_VER=9.3.0 \
+    MUSL_VER=1.2.0 \
+    DL_CMD="curl -C - -L -o" \
+    OUTPUT=/usr/local/ \
+    "$@"
+#RUN curl -sLO https://musl.cc/$MUSL_TARGET-cross.tgz&& \
+#    tar xzf $MUSL_TARGET-cross.tgz&& \
+#    cd $MUSL_TARGET-cross&& \
+#    cp -fR * ../../usr/local/&& \
+#    cd ..&& rm -rf $MUSL_TARGET-cross*
 
 ENV CC=$TARGET-gcc \
     CXX=$TARGET-g++ \
@@ -49,22 +66,23 @@ ENV CC=$TARGET-gcc \
     PATH=/usr/local/$TARGET/bin:$PATH
 
 # ZLib & OpenSSL
-RUN export C_INCLUDE_PATH=$TARGET_C_INCLUDE_PATH && \
-    echo "Building zlib" && \
+RUN echo "Building zlib" && \
     VERS=1.2.11 && \
     curl -sLO https://zlib.net/zlib-$VERS.tar.gz && \
     tar xzf zlib-$VERS.tar.gz && cd zlib-$VERS && \
-    ./configure --static --prefix=/usr/local/$TARGET && \
+    $CC -v&&\
+    CHOST=$TARGET CC=$TARGET_CC ./configure --static --prefix=/usr/local/$TARGET && \
     make && make install && \
-    cd .. && rm -rf zlib-$VERS.tar.gz zlib-$VERS checksums.txt && \
-    echo "Building OpenSSL" && \
+    cd .. && rm -rf zlib-$VERS.tar.gz zlib-$VERS checksums.txt
+RUN echo "Building OpenSSL" && \
     VERS=1.1.1d && \
     curl -sLO https://www.openssl.org/source/openssl-$VERS.tar.gz && \
     tar xzf openssl-$VERS.tar.gz && cd openssl-$VERS && \
-    ./Configure $OPENSSL_ARCH no-async no-afalgeng no-shared --static -fPIC --prefix=/usr/local/$TARGET && \
+    ./Configure $OPENSSL_ARCH no-async no-afalgeng no-shared --static --prefix=/usr/local/$TARGET && \
     make depend && \
     make && make install && \
     cd .. && rm -rf openssl-$VERS.tar.gz openssl-$VERS checksums.txt /usr/local/$TARGET/share
+
 
 # download rustup
 ADD "https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/rustup-init" rustup-init
