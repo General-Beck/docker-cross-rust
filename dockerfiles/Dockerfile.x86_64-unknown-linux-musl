@@ -22,7 +22,7 @@ RUN set -eux; \
 RUN curl -L https://git.zv.io/toolchains/musl-cross-make/-/archive/master/musl-cross-make-master.tar.gz | \
     tar --strip-components=1 -xz; \
     make install -j$(nproc) \
-    TARGET=$MUSL_TARGET
+    TARGET=$MUSL_TARGET \
     GCC_VER=9.3.0 \
     MUSL_VER=1.2.0 \
     BINUTILS_VER = 2.34 \
@@ -45,14 +45,14 @@ RUN curl -L https://git.zv.io/toolchains/musl-cross-make/-/archive/master/musl-c
 #    cd ..&& rm -rf $MUSL_TARGET-cross*
 
 
-ENV CC=$MUSL_TARGETgcc \
-    CXX=$MUSL_TARGETg++ \
-    CC_x86_64_unknown_linux_musl=$MUSL_TARGETgcc \
-    CXX_x86_64_unknown_linux_musl=$MUSL_TARGETg++\
-    CARGO_TARGET_X86_64_UNKNOWN_LINUX_MUSL_LINKER=$MUSL_TARGETgcc \
-    TARGET_CC=$MUSL_TARGETgcc\
-    TARGET_CXX=$MUSL_TARGETg++\
-    TARGET_AR=$MUSL_TARGETar\
+ENV CC=$MUSL_TARGET-gcc \
+    CXX=$MUSL_TARGET-g++ \
+    CC_x86_64_unknown_linux_musl=$MUSL_TARGET-gcc \
+    CXX_x86_64_unknown_linux_musl=$MUSL_TARGET-g++\
+    CARGO_TARGET_X86_64_UNKNOWN_LINUX_MUSL_LINKER=$MUSL_TARGET-gcc \
+    TARGET_CC=$MUSL_TARGET-gcc\
+    TARGET_CXX=$MUSL_TARGET-g++\
+    TARGET_AR=$MUSL_TARGET-ar\
     TARGET_C_INCLUDE_PATH=/usr/local/$MUSL_TARGET/include/\
     CXX_LIB_PATH_x86_64_unknown_linux_musl=/usr/local/$MUSL_TARGET/lib/ \
     C_LIB_PATH_x86_64_unknown_linux_musl=/usr/local/$MUSL_TARGET/lib/\
