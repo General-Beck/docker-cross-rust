@@ -3,7 +3,7 @@
 TOOLS='clang lld'
 PROJECTS='libunwind compiler-rt libcxx libcxxabi'
 ARCH="$(uname -m)"
-TARGETS='X86'
+TARGETS='X86;AArch64;ARM;WebAssembly'
 ROOT=$(dirname $(readlink -f "$0"))
 
 PATH=/"$ARCH"-unknown-linux-musl/bin:"$PATH"
@@ -50,6 +50,7 @@ ln -s llvm-nm nm
 ln -s clang cc
 ln -s clang++ c++
 ln -s ld.lld ld
+ln -s ld.lld rust-lld
 cd / || $(echo 'failed to change directory' && exit 1)
 tar cvfz "$ARCH"-unknown-linux-musl.tar.gz "$ARCH"-unknown-linux-musl || exit 46
 mkdir -p $ROOT/artifact || $(echo 'failed to change directory' && exit 1)

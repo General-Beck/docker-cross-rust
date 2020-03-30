@@ -29,3 +29,10 @@ jobs:
         with:
           name:        x86_64-unknown-linux-musl.zip
           path:        dockerfiles/artifact/
+      - name: Upload release
+        uses: yakuhzi/action-release@v1
+        with:
+          file: dockerfiles/artifact/x86_64-unknown-linux-musl.zip
+          #changelog: /path/to/CHANGELOG.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

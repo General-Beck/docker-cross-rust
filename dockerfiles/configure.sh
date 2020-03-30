@@ -3,7 +3,7 @@
 TOOLS='clang lld'
 PROJECTS='libunwind compiler-rt libcxx libcxxabi'
 ARCH="$(uname -m)"
-TARGETS='X86'
+TARGETS='X86;AArch64;ARM;WebAssembly'
 ROOT=$(dirname $(readlink -f "$0"))
 
 PATH=/"$ARCH"-unknown-linux-musl/bin:"$PATH"
