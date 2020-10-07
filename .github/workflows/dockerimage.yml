@@ -17,7 +17,7 @@ jobs:
       - name: Build the Docker image
         run: docker build . --file dockerfiles/Dockerfile.x86_64-unknown-linux-musl --tag ghcr.io/general-beck/docker-cross-rust/docker-cross-rust:x86_64-unknown-linux-musl
       - name: Docker login
-        run: docker login ghcr.io -u General-Beck -p ${{ secrets.CR_PAT }}
+        run: echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
       - name: Push the Docker image
         run: docker push ghcr.io/general-beck/docker-cross-rust/docker-cross-rust:x86_64-unknown-linux-musl
       - name: Docker logout
